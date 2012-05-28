@@ -21,6 +21,8 @@ Install via pypi or copy this module into your project or into your PYTHONPATH.
 
 **Put brevisurl into INSTALLED_APPS in your projects settings.py file**
 
+::
+
  INSTALLED_APPS = (
      'localeurl',
      'django.contrib.auth',
@@ -35,6 +37,7 @@ Install via pypi or copy this module into your project or into your PYTHONPATH.
      'south',
      'brevisurl'
  )
+
 
 
 **Run syncdb command to create database tables from brevisurl models**
