@@ -58,6 +58,16 @@ Configuration
  BREVISURL_BACKEND = 'brevisurl.backends.local.BrevisUrlBackend' # Default is 'brevisurl.backends.local.BrevisUrlBackend'
 
 
+**Append brevisurl url patterns to your urls.py at the end of module, if you're using local backend**
+
+::
+
+ urlpatterns += patterns('',
+     # brevisurl urls
+     (r'^', include('brevisurl.urls'))
+ )
+
+
 Examples
 --------
 
