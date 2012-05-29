@@ -2,6 +2,7 @@ from django.core.validators import URLValidator
 from django.test import TestCase
 from django.template import Template, Context
 
+import brevisurl.settings
 from brevisurl.models import ShortUrl
 
 
@@ -34,3 +35,15 @@ class TestShortenUrlTag(TestCase):
         """).render(Context()).strip()
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertRegexpMatches(url, URLValidator.regex)
+
+
+    def test_absurl_tag_domain_from_settings(self):
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN = 'http://brevisurl.net/'
+        url = Template("""
+        {% load brevisurltags %}
+        {% absurl brevisurl_redirect token='12345' as brevis_url %}
+        {{ brevis_url|shorten_url }}
+        """).render(Context()).strip()
+        self.assertEqual(ShortUrl.objects.all().count(), 1)
+        self.assertRegexpMatches(url, URLValidator.regex)
+        self.assertRegexpMatches(url, r'^http://brevisurl\.net/[a-zA-Z0-9]{5}$')

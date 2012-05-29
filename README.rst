@@ -57,6 +57,10 @@ Configuration
  # Setting for default brevis backend
  BREVISURL_BACKEND = 'brevisurl.backends.local.BrevisUrlBackend' # Default is 'brevisurl.backends.local.BrevisUrlBackend'
 
+ # This bypasses Django Site framework and settings.SITE_ID; if set, brevisurl don't use Django Site framework
+ # but uses this settings insted to generate  absolute urls
+ BREVISURL_BACKEND_LOCAL_DOMAIN = 'http://brevisurl.net/' # Default is None
+
 
 **Append brevisurl url patterns to your urls.py at the end of module, if you're using local backend**
 
@@ -65,6 +69,18 @@ Configuration
  urlpatterns += patterns('',
      # brevisurl urls
      (r'^', include('brevisurl.urls'))
+ )
+
+**To be able to access brevisurl settings add brevisurl.context_processors.brevisurl_data to your context processors**
+
+::
+
+ TEMPLATE_CONTEXT_PROCESSORS = (
+     'django.contrib.auth.context_processors.auth',
+     'django.core.context_processors.debug',
+     'django.core.context_processors.request',
+     'django.contrib.messages.context_processors.messages',
+     'brevisurl.context_processors.brevisurl_data'
  )
 
 

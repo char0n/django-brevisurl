@@ -3,7 +3,9 @@ import random
 import logging
 
 from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
 
+import brevisurl.settings
 from brevisurl.backends.base import BaseBrevisUrlBackend
 from brevisurl.models import ShortUrl
 
@@ -27,11 +29,17 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
             pass
 
         try:
-            current_site = Site.objects.get_current()
             short_url = ShortUrl()
+            if brevisurl.settings.LOCAL_BACKEND_DOMAIN is not None:
+                short_url.shortened_url = '{0}{1}'.format(brevisurl.settings.LOCAL_BACKEND_DOMAIN.rstrip('/'),
+                                                          reverse('brevisurl_redirect',
+                                                                  kwargs={'token': self.__generate_token()}))
+            else:
+                current_site = Site.objects.get_current()
+                short_url.shortened_url = '{0}://{1}{2}'.format(self.PROTOCOL, current_site.domain,
+                                                                reverse('brevisurl_redirect',
+                                                                        kwargs={'token': self.__generate_token()}))
             short_url.original_url = original_url
-            short_url.shortened_url = '{0}://{1}/{2}'.format(self.PROTOCOL, current_site.domain,
-                                                             self.__generate_token())
             short_url.backend = self.class_path
             short_url.save()
             log.info('Url "%s" shortened to "%s"', original_url, short_url.shortened_url)

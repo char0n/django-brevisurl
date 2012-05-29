@@ -4,6 +4,7 @@ from django import template
 from django.template.defaulttags import URLNode, url
 from django.contrib.sites.models import Site
 
+import brevisurl.settings
 from brevisurl import shorten_url as shorten_url_util, get_connection
 
 
@@ -20,7 +21,10 @@ def shorten_url(original_url):
 class AbsoluteURLNode(URLNode):
     def render(self, context):
         path = super(AbsoluteURLNode, self).render(context)
-        domain = "http://{0}".format(Site.objects.get_current().domain)
+        if brevisurl.settings.LOCAL_BACKEND_DOMAIN is not None:
+            domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN
+        else:
+            domain = "http://{0}".format(Site.objects.get_current().domain)
         if self.asvar:
             context[self.asvar]= urlparse.urljoin(domain, context[self.asvar])
             return ''
