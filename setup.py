@@ -16,7 +16,7 @@ def read(fname):
 
 setup(
     name='django-brevisurl',
-    version='0.9.2',
+    version='0.9.3',
     description='django-brevisurl is django app for shortening urls',
     long_description=read('README.rst'),
     author=u'Vladimír Gorej',
