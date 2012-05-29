@@ -83,6 +83,21 @@ Configuration
      'brevisurl.context_processors.brevisurl_data'
  )
 
+**Configure site framework**
+
+This setting is important for local backend only. At least one Site object
+must be created and configured as current via settings.SITE_ID. For development/production
+switching I suggest you to use configuration like this. Setting is also important
+while using `absurl` templatag. Domain for absolute url is generated from current Site object.
+
+::
+ 
+ if DEBUG:
+     SITE_ID = 2 # pk for Site object containing your development domain e.g. 'localhost:8000'
+ else:
+     SITE_ID = 1 # pk for Site object containing your production domain e.g. 'www.production.net'
+
+
 
 Examples
 --------
