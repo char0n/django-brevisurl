@@ -3,6 +3,7 @@ from django.test.client import Client
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 
+import brevisurl.settings
 from brevisurl import get_connection
 from brevisurl.models import ShortUrl
 
@@ -10,6 +11,8 @@ from brevisurl.models import ShortUrl
 class TestBrevisUrlRedirectView(TestCase):
 
     def setUp(self):
+        self.LOCAL_BACKEND_DOMAIN = brevisurl.settings.LOCAL_BACKEND_DOMAIN
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN = None
         self.site = Site.objects.get_current()
         self.connection = get_connection('brevisurl.backends.local.BrevisUrlBackend')
         self.short_url = ShortUrl()
@@ -18,6 +21,9 @@ class TestBrevisUrlRedirectView(TestCase):
         self.short_url.backend = self.connection.class_path
         self.short_url.save()
         self.client = Client()
+
+    def tearDown(self):
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN = self.LOCAL_BACKEND_DOMAIN
 
     def test_redirect(self):
         response = self.client.get(reverse('brevisurl_redirect', kwargs={'token': 12345}))
