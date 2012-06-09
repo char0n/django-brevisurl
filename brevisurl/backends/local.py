@@ -55,7 +55,7 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
 
     def __generate_token(self, size=5):
         chars = list(string.ascii_letters + string.digits)
-        if ShortUrl.objects.count >= chars ** size:
+        if ShortUrl.objects.count() >= len(chars) ** size:
             raise TokensExhausted('Consider incrementing the token length or chars list')
         random.shuffle(chars)
         while True:
