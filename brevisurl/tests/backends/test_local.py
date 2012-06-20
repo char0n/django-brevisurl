@@ -88,3 +88,11 @@ class TestLocalBrevisUrlBackend(TestCase):
             original_url = 'http://www.codescale.net/another/'
             short_url = self.connection.shorten_url(original_url)
         brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS = _default_chars
+
+    def test_custom_domain(self):
+        original_url = 'http://www.codescale.net/'
+        connection = get_connection('brevisurl.backends.local.BrevisUrlBackend', domain='http://test.com/')
+        self.assertEqual(ShortUrl.objects.all().count(), 0)
+        short_url = connection.shorten_url(original_url)
+        self.assertEqual(ShortUrl.objects.all().count(), 1)
+        self.assertRegexpMatches(short_url.shortened_url, r'^http://test\.com/.{5}')

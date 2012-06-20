@@ -10,6 +10,7 @@ class BaseBrevisUrlBackend(object):
     def __init__(self, fail_silently=False, **kwargs):
         self.fail_silently = fail_silently
         self.class_path = '{0}.{1}'.format(self.__module__, self.__class__.__name__)
+        self.kwargs = kwargs
 
     def open(self):
         """Open a network connection.

@@ -36,7 +36,11 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
 
         try:
             short_url = ShortUrl()
-            if brevisurl.settings.LOCAL_BACKEND_DOMAIN is not None:
+            if self.kwargs.get('domain') is not None:
+                short_url.shortened_url = '{0}{1}'.format(self.kwargs.get('domain').rstrip('/'),
+                                                          reverse('brevisurl_redirect',
+                                                                  kwargs={'token': self.__generate_token()}))
+            elif brevisurl.settings.LOCAL_BACKEND_DOMAIN is not None:
                 short_url.shortened_url = '{0}{1}'.format(brevisurl.settings.LOCAL_BACKEND_DOMAIN.rstrip('/'),
                                                           reverse('brevisurl_redirect',
                                                                   kwargs={'token': self.__generate_token()}))
