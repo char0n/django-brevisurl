@@ -1,3 +1,4 @@
+import math
 import string
 import random
 import logging
@@ -6,14 +7,17 @@ from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 
 import brevisurl.settings
+from brevisurl import Error
 from brevisurl.backends.base import BaseBrevisUrlBackend
 from brevisurl.models import ShortUrl
 
 
 log = logging.getLogger(__name__)
 
-class TokensExhausted(Exception):
-    pass
+
+class TokensExhaustedError(Error):
+    """Exception is raised when tokens are exhausted."""
+
 
 class BrevisUrlBackend(BaseBrevisUrlBackend):
 
@@ -22,6 +26,7 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
     def shorten_url(self, original_url):
         """
         :raises: ImproperlyConfigured, django.core.exceptions.ValidationError
+        :raises: brevisurl.backends.local.TokensExhaustedError
         """
         try:
             short_url = ShortUrl.objects.get(backend=self.class_path, original_url=original_url)
@@ -55,8 +60,8 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
 
     def __generate_token(self, size=5):
         chars = list(string.ascii_letters + string.digits)
-        if ShortUrl.objects.count() >= len(chars) ** size:
-            raise TokensExhausted('Consider incrementing the token length or chars list')
+        if ShortUrl.objects.count() >= math.pow(len(chars), size):
+            raise TokensExhaustedError('Consider incrementing the token length or change the char list')
         random.shuffle(chars)
         while True:
             token = ''.join([random.choice(chars) for x in range(size)])

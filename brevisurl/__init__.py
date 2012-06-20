@@ -1,3 +1,9 @@
+import traceback
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
 import brevisurl.settings
 from brevisurl.utils import load_object
 
@@ -35,3 +41,16 @@ def shorten_url(original_url, fail_silently=False, connection=None):
     """
     connection = connection or get_connection(fail_silently=fail_silently)
     return connection.shorten_url(original_url)
+
+
+class Error(Exception):
+    """Base django-brevisurl Error."""
+
+    def __init__(self, value):
+        s = StringIO()
+        traceback.print_exc(file=s)
+        self.value = (value, s.getvalue())
+        s.close()
+
+    def __str__(self):
+        return repr(self.value)
