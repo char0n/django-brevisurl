@@ -38,6 +38,7 @@ class TestShortenUrlTag(TestCase):
 
 
     def test_absurl_tag_domain_from_settings(self):
+        _original_domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN
         brevisurl.settings.LOCAL_BACKEND_DOMAIN = 'http://brevisurl.net/'
         url = Template("""
         {% load brevisurltags %}
@@ -47,3 +48,4 @@ class TestShortenUrlTag(TestCase):
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertRegexpMatches(url, URLValidator.regex)
         self.assertRegexpMatches(url, r'^http://brevisurl\.net/[a-zA-Z0-9]{5}$')
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN = _original_domain

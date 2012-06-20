@@ -14,6 +14,7 @@ class TestLocalBrevisUrlBackend(TestCase):
         self.connection = get_connection('brevisurl.backends.local.BrevisUrlBackend')
 
     def test_shorten_url_use_site_framework(self):
+        _original_domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN
         brevisurl.settings.LOCAL_BACKEND_DOMAIN = None
         self.assertEqual(ShortUrl.objects.all().count(), 0)
         original_url = 'http://www.codescale.net/'
@@ -21,15 +22,18 @@ class TestLocalBrevisUrlBackend(TestCase):
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertEqual(short_url.original_url, original_url)
         self.assertRegexpMatches(short_url.shortened_url, URLValidator.regex)
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN = _original_domain
 
     def test_shorten_url_domain_from_settings(self):
         self.assertEqual(ShortUrl.objects.all().count(), 0)
+        _original_domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN
         brevisurl.settings.LOCAL_BACKEND_DOMAIN = 'http://brevisurl.net/'
         original_url = 'http://www.codescale.net/'
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertEqual(short_url.original_url, original_url)
         self.assertRegexpMatches(short_url.shortened_url, r'^http://brevisurl\.net/[a-zA-Z0-9]{5}$')
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN = _original_domain
 
     def test_shorten_url_reuse_old(self):
         original_url = 'http://www.codescale.net/'
@@ -96,3 +100,20 @@ class TestLocalBrevisUrlBackend(TestCase):
         short_url = connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertRegexpMatches(short_url.shortened_url, r'^http://test\.com/.{5}')
+
+    def test_configurable_protocol(self):
+        _original_domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN = None
+        original_url = 'http://www.codescale.net/'
+        self.assertEqual(ShortUrl.objects.all().count(), 0)
+        short_url = self.connection.shorten_url(original_url)
+        self.assertEqual(ShortUrl.objects.all().count(), 1)
+        self.assertRegexpMatches(short_url.shortened_url, '^http://')
+        original_url = 'http://www.codescale.net/another'
+        _default_protocol = brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL = 'https'
+        short_url = self.connection.shorten_url(original_url)
+        self.assertEqual(ShortUrl.objects.all().count(), 2)
+        self.assertRegexpMatches(short_url.shortened_url, '^https://')
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL = _default_protocol
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN = None

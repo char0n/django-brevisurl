@@ -20,8 +20,6 @@ class TokensExhaustedError(Error):
 
 class BrevisUrlBackend(BaseBrevisUrlBackend):
 
-    PROTOCOL = 'http'
-
     def shorten_url(self, original_url):
         """
         :raises: ImproperlyConfigured, django.core.exceptions.ValidationError
@@ -46,7 +44,8 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
                                                                   kwargs={'token': self.__generate_token()}))
             else:
                 current_site = Site.objects.get_current()
-                short_url.shortened_url = '{0}://{1}{2}'.format(self.PROTOCOL, current_site.domain,
+                short_url.shortened_url = '{0}://{1}{2}'.format(brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL,
+                                                                current_site.domain,
                                                                 reverse('brevisurl_redirect',
                                                                         kwargs={'token': self.__generate_token()}))
             short_url.original_url = original_url

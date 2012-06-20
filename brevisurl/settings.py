@@ -18,3 +18,6 @@ LOCAL_BACKEND_TOKEN_LENGTH = getattr(settings, 'BREVISURL_LOCAL_BACKEND_TOKEN_LE
 # Settings for url pattern
 LOCAL_BACKEND_URL_PATTERN = getattr(settings, 'BREVISURL_LOCAL_BACKEND_URL_PATTERN',
                                     r'^(?P<token>[a-zA-Z0-9]{' + str(LOCAL_BACKEND_TOKEN_LENGTH) + r'})$')
+
+# Protocol for local backend
+LOCAL_BACKEND_DOMAIN_PROTOCOL = getattr(settings, 'BREVISURL_LOCAL_BACKEND_DOMAIN_PROTOCOL', 'http')

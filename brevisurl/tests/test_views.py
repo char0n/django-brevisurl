@@ -17,7 +17,8 @@ class TestBrevisUrlRedirectView(TestCase):
         self.connection = get_connection('brevisurl.backends.local.BrevisUrlBackend')
         self.short_url = ShortUrl()
         self.short_url.original_url = 'http://www.codescale.net/'
-        self.short_url.shortened_url = '{0}://{1}/12345'.format(self.connection.PROTOCOL, self.site.domain)
+        self.short_url.shortened_url = '{0}://{1}/12345'.format(brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL,
+                                                                self.site.domain)
         self.short_url.backend = self.connection.class_path
         self.short_url.save()
         self.client = Client()

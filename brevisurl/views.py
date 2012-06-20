@@ -28,7 +28,7 @@ class BrevisUrlRedirectView(RedirectView):
         else:
             try:
                 site = Site.objects.get_current()
-                domain = '{0}://{1}'.format(connection.PROTOCOL, site.domain)
+                domain = '{0}://{1}'.format(brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL, site.domain)
             except ImproperlyConfigured:
                 log.exception('No site object configured for this django project')
                 raise Http404
