@@ -5,6 +5,7 @@ from django.core.validators import URLValidator
 import brevisurl.settings
 from brevisurl import get_connection
 from brevisurl.models import ShortUrl
+from brevisurl.backends.local import TokensExhaustedError
 
 
 class TestLocalBrevisUrlBackend(TestCase):
@@ -64,3 +65,26 @@ class TestLocalBrevisUrlBackend(TestCase):
         self.connection.fail_silently = True
         shorl_url = self.connection.shorten_url('www.codescale.')
         self.assertIsNone(shorl_url)
+
+    def test_configurable_token_chars(self):
+        original_url = 'http://www.codescale.net/'
+        _default_chars = brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS
+        brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS = ['a']
+        self.assertEqual(ShortUrl.objects.all().count(), 0)
+        short_url = self.connection.shorten_url(original_url)
+        self.assertEqual(ShortUrl.objects.all().count(), 1)
+        self.assertEqual(short_url.original_url, original_url)
+        self.assertRegexpMatches(short_url.shortened_url, r'/aaaaa$')
+        brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS = _default_chars
+
+    def test_exhausted_tokens(self):
+        original_url = 'http://www.codescale.net/'
+        _default_chars = brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS
+        brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS = ['a']
+        self.assertEqual(ShortUrl.objects.all().count(), 0)
+        short_url = self.connection.shorten_url(original_url)
+        self.assertEqual(ShortUrl.objects.all().count(), 1)
+        with self.assertRaises(TokensExhaustedError):
+            original_url = 'http://www.codescale.net/another/'
+            short_url = self.connection.shorten_url(original_url)
+        brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS = _default_chars

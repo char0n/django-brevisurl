@@ -1,5 +1,4 @@
 import math
-import string
 import random
 import logging
 
@@ -59,7 +58,7 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
                 raise
 
     def __generate_token(self, size=5):
-        chars = list(string.ascii_letters + string.digits)
+        chars = brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS
         if ShortUrl.objects.count() >= math.pow(len(chars), size):
             raise TokensExhaustedError('Consider incrementing the token length or change the char list')
         random.shuffle(chars)
