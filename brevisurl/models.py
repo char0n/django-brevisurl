@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 class ShortUrl(models.Model):
     """Model that represents shortened url."""
-    original_url = models.URLField(null=False, blank=False)
+    original_url = models.CharField(max_length=200, null=False, blank=False)
     original_url_hash = models.CharField(max_length=64, null=False, blank=False)
     shortened_url = models.URLField(max_length=200, null=False, blank=False, unique=True)
     backend = models.CharField(max_length=200, null=False, blank=False)
@@ -32,11 +32,6 @@ class ShortUrl(models.Model):
 
     def clean(self):
         url_validator = URLValidator()
-        try:
-            url_validator(self.original_url)
-        except ValidationError:
-            log.exception('ShortUrl.original_url is not valid URL')
-            raise
         try:
             url_validator(self.shortened_url)
         except ValidationError:

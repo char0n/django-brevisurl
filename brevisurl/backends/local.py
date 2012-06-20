@@ -12,6 +12,8 @@ from brevisurl.models import ShortUrl
 
 log = logging.getLogger(__name__)
 
+class TokensExhausted(Exception):
+    pass
 
 class BrevisUrlBackend(BaseBrevisUrlBackend):
 
@@ -53,6 +55,8 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
 
     def __generate_token(self, size=5):
         chars = list(string.ascii_letters + string.digits)
+        if ShortUrl.objects.count() >= len(chars) ** size:
+            raise TokensExhausted('Consider incrementing the token length or chars list')
         random.shuffle(chars)
         while True:
             token = ''.join([random.choice(chars) for x in range(size)])
