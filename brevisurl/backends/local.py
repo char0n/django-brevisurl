@@ -57,8 +57,9 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
                 log.exception('Unknown exception raised while shortening url "%s"', original_url)
                 raise
 
-    def __generate_token(self, size=5):
+    def __generate_token(self):
         chars = brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS
+        size = brevisurl.settings.LOCAL_BACKEND_TOKEN_LENGTH
         if ShortUrl.objects.count() >= math.pow(len(chars), size):
             raise TokensExhaustedError('Consider incrementing the token length or change the char list')
         random.shuffle(chars)
