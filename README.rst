@@ -133,7 +133,7 @@ Using brevisurl in templates via filter approach
 
 ::
 
- {% load brevisurl %}
+ {% load brevisurltags %}
  {% url homepage as homepage_url %}
  {{ homepage_url|shorten_url }}
 
