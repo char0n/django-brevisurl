@@ -73,10 +73,6 @@ Configuration
  # Protocol for local backend.
  BREVISURL_LOCAL_BACKEND_DOMAIN_PROTOCOL = getattr(settings, 'BREVISURL_LOCAL_BACKEND_DOMAIN_PROTOCOL', 'http')
 
- # Do we need slash in newly generated token url ?
- BREVISURL_LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH = getattr(settings, 'BREVISURL_LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH', False)
-
-
 
 **Append brevisurl url patterns to your urls.py at the end of module, if you're using local backend**
 

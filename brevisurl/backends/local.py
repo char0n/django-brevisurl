@@ -37,10 +37,10 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
             short_url = ShortUrl()
             if self.kwargs.get('domain') is not None:
                 # Domain is present in keyword arguments supplied by constructor.
-                domain = self.kwargs.get('domain').rstrip('/')
+                domain = self.kwargs.get('domain')
             elif brevisurl.settings.LOCAL_BACKEND_DOMAIN is not None:
                 # Domain is defined in settings.
-                domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN.rstrip('/')
+                domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN
             else:
                 # Domain is taken from django site framework.
                 domain = Site.objects.get_current().domain

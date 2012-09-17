@@ -20,6 +20,3 @@ LOCAL_BACKEND_URL_PATTERN = getattr(settings, 'BREVISURL_LOCAL_BACKEND_URL_PATTE
                                     r'^(?P<token>[a-zA-Z0-9]{' + str(LOCAL_BACKEND_TOKEN_LENGTH) + r'})$')
 # Protocol for local backend.
 LOCAL_BACKEND_DOMAIN_PROTOCOL = getattr(settings, 'BREVISURL_LOCAL_BACKEND_DOMAIN_PROTOCOL', 'http')
-
-# Do we need slash in newly generated token url ?
-LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH = getattr(settings, 'BREVISURL_LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH', False)

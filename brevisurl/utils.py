@@ -28,12 +28,26 @@ def url_has_protocol(url):
 
     :param url: url that is being examined.
     :type url: string
-    :returns: True if url has protocol, False if not
+    :returns: True if url has protocol, False otherwise
     :rtype: bool
 
     """
     url_parsed = urlparse.urlparse(url)
     return True if url_parsed.netloc != '' and url_parsed.scheme in ('http', 'https') else False
+
+
+def url_has_path(url):
+    """Util for determining whether url has path present or not.
+
+    :param url: url that is being examined.
+    :type url: string
+    :returns: True if url has path, False otherwise
+    :rtype: bool
+
+    """
+    url_parsed = urlparse.urlparse(url)
+    return True if url_parsed.netloc != '' and url_parsed.path != '' else False
+
 
 
 def absurl(protocol=None, domain=None, site=None, path='/'):
@@ -54,14 +68,17 @@ def absurl(protocol=None, domain=None, site=None, path='/'):
     :rtype: string
 
     """
+    # Searching for domain.
     protocol = protocol or brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL
     if domain is None and site is None:
         domain = Site.objects.get_current().domain
     elif domain is None and site is not None:
         domain = site.domain
-    if brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH:
-        path = path.lstrip('/')
-    if url_has_protocol(domain):
-        return '{domain:s}{path:s}'.format(domain=domain, path=path)
-    else:
-        return '{protocol:s}://{domain:s}{path:s}'.format(protocol=protocol, domain=domain, path=path)
+    # Append protocol if not present.
+    if not url_has_protocol(domain):
+        domain = '{protocol:s}://{domain:s}'.format(protocol=protocol, domain=domain)
+    # Always append default path if not present in domain.
+    if not url_has_path(domain):
+        domain = '{domain:s}/'.format(domain=domain)
+    # Concatenate domain with protocol and path.
+    return '{domain:s}{path:s}'.format(domain=domain, path=path.lstrip('/'))

@@ -1,7 +1,7 @@
 from django.utils import unittest
 from django.contrib.sites.models import Site
 
-from brevisurl.utils import load_object, absurl, url_has_protocol
+from brevisurl.utils import load_object, absurl, url_has_protocol, url_has_path
 from brevisurl.backends.local import BrevisUrlBackend
 
 
@@ -63,3 +63,14 @@ class TestUrlHasProtocol(unittest.TestCase):
     def test_url_without_protocol(self):
         url = 'test.sk/path/'
         self.assertFalse(url_has_protocol(url))
+
+
+class TestUrlHasPath(unittest.TestCase):
+
+    def test_url_with_path(self):
+        url = 'http://test.sk/'
+        self.assertTrue(url_has_path(url))
+
+    def test_url_without_path(self):
+        url = 'http://test.sk'
+        self.assertFalse(url_has_path(url))
