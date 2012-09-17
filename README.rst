@@ -61,6 +61,22 @@ Configuration
  # but uses this settings insted to generate  absolute urls
  BREVISURL_BACKEND_LOCAL_DOMAIN = 'http://brevisurl.net/' # Default is None
 
+ # Characters that are used to generate tokens for local backend.
+ BREVISURL_LOCAL_BACKEND_TOKEN_CHARS = list(string.ascii_letters + string.digits)
+
+ # Settings for token length.
+ BREVISURL_LOCAL_BACKEND_TOKEN_LENGTH = 5
+
+ # Settings for url pattern.
+ BREVISURL_LOCAL_BACKEND_URL_PATTERN = r'^(?P<token>[a-zA-Z0-9]{' + str(LOCAL_BACKEND_TOKEN_LENGTH) + r'})$'
+
+ # Protocol for local backend.
+ BREVISURL_LOCAL_BACKEND_DOMAIN_PROTOCOL = getattr(settings, 'BREVISURL_LOCAL_BACKEND_DOMAIN_PROTOCOL', 'http')
+
+ # Do we need slash in newly generated token url ?
+ BREVISURL_LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH = getattr(settings, 'BREVISURL_LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH', False)
+
+
 
 **Append brevisurl url patterns to your urls.py at the end of module, if you're using local backend**
 
@@ -160,7 +176,7 @@ Tests
 - Xubuntu Linux 12.04 LTS precise 64-bit
 - python 2.7.3+
 - python unittest
-- django 1.4
+- django 1.4.1
 
 **Running tests**
 
@@ -175,7 +191,7 @@ Author
 
 | char0n (Vladimír Gorej, CodeScale s.r.o.)
 | email: gorej@codescale.net
-| web: http://www.codescale.net
+| web: http://www.codescale.net/
 
 
 References
