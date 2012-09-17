@@ -9,6 +9,7 @@ import brevisurl.settings
 from brevisurl import Error
 from brevisurl.backends.base import BaseBrevisUrlBackend
 from brevisurl.models import ShortUrl
+from brevisurl.utils import absurl
 
 
 log = logging.getLogger(__name__)
@@ -42,15 +43,11 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
                 domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN.rstrip('/')
             else:
                 # Domain is taken from django site framework.
-                domain = '{protocol:s}://{domain:s}'.format(protocol=brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL,
-                                                            domain=Site.objects.get_current().domain)
-            # Generating url path for shortened url.
-            url_path = reverse('brevisurl_redirect', kwargs={'token': self.__generate_token()})
-            if brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH:
-                url_path = url_path.lstrip('/')
+                domain = Site.objects.get_current().domain
             # Saving newly generated shortened url.
             short_url.original_url = original_url
-            short_url.shortened_url = '{domain:s}{url_path:s}'.format(domain=domain, url_path=url_path)
+            short_url.shortened_url = absurl(domain=domain, path=reverse('brevisurl_redirect',
+                                                                         kwargs={'token': self.__generate_token()}))
             short_url.backend = self.class_path
             short_url.save()
             log.info('Url "%s" shortened to "%s"', original_url, short_url.shortened_url)

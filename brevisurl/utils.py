@@ -1,3 +1,5 @@
+import urlparse
+
 from django.utils import importlib
 from django.contrib.sites.models import Site
 
@@ -21,8 +23,20 @@ def load_object(import_path):
     return getattr(module, object_name)
 
 
-def absurl(protocol=brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL,
-           domain=None, site=None, path='/'):
+def url_has_protocol(url):
+    """Util for determining whether url has protocol present or not.
+
+    :param url: url that is being examined.
+    :type url: string
+    :returns: True if url has protocol, False if not
+    :rtype: bool
+
+    """
+    url_parsed = urlparse.urlparse(url)
+    return True if url_parsed.netloc != '' and url_parsed.scheme in ('http', 'https') else False
+
+
+def absurl(protocol=None, domain=None, site=None, path='/'):
     """Util for constructing absolute urls from relative urls.
 
     Keyword argument domain has higher priority over site. If site not set
@@ -40,10 +54,14 @@ def absurl(protocol=brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL,
     :rtype: string
 
     """
+    protocol = protocol or brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL
     if domain is None and site is None:
         domain = Site.objects.get_current().domain
     elif domain is None and site is not None:
         domain = site.domain
     if brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH:
         path = path.lstrip('/')
-    return '{0}://{1}{2}'.format(protocol, domain, path)
+    if url_has_protocol(domain):
+        return '{domain:s}{path:s}'.format(domain=domain, path=path)
+    else:
+        return '{protocol:s}://{domain:s}{path:s}'.format(protocol=protocol, domain=domain, path=path)

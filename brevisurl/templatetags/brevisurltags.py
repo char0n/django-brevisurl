@@ -20,7 +20,7 @@ def shorten_url(original_url):
 class AbsoluteURLNode(URLNode):
     def render(self, context):
         path = super(AbsoluteURLNode, self).render(context)
-        domain = 'http://{0}'.format(Site.objects.get_current().domain)
+        domain = 'http://{domain:s}'.format(domain=Site.objects.get_current().domain)
         if self.asvar:
             context[self.asvar]= urlparse.urljoin(domain, context[self.asvar])
             return ''
