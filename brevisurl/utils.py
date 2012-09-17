@@ -44,4 +44,6 @@ def absurl(protocol=brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL,
         domain = Site.objects.get_current().domain
     elif domain is None and site is not None:
         domain = site.domain
+    if brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH:
+        path = path.lstrip('/')
     return '{0}://{1}{2}'.format(protocol, domain, path)

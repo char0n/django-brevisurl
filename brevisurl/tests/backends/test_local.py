@@ -116,4 +116,22 @@ class TestLocalBrevisUrlBackend(TestCase):
         self.assertEqual(ShortUrl.objects.all().count(), 2)
         self.assertRegexpMatches(short_url.shortened_url, '^https://')
         brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL = _default_protocol
-        brevisurl.settings.LOCAL_BACKEND_DOMAIN = None
+        brevisurl.settings.LOCAL_BACKEND_DOMAIN = _original_domain
+
+    def test_url_path_slash_stripping(self):
+        _original_slash_strip = brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH
+        original_url = 'http://www.codescale.net/'
+        connection = get_connection('brevisurl.backends.local.BrevisUrlBackend', domain='http://test.com/d')
+        brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH = True
+        short_url = connection.shorten_url(original_url)
+        self.assertRegexpMatches(short_url.shortened_url, r'^http://test\.com/d[^/]{5}$')
+        brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH = _original_slash_strip
+
+    def test_url_path_slash_no_stripping(self):
+        _original_slash_strip = brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH
+        original_url = 'http://www.codescale.net/'
+        connection = get_connection('brevisurl.backends.local.BrevisUrlBackend', domain='http://test.com/d')
+        brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH = False
+        short_url = connection.shorten_url(original_url)
+        self.assertRegexpMatches(short_url.shortened_url, r'^http://test\.com/d/[^/]{5}$')
+        brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH = _original_slash_strip

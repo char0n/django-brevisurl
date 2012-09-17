@@ -28,7 +28,7 @@ class BrevisUrlRedirectView(RedirectView):
         connection = get_connection('brevisurl.backends.local.BrevisUrlBackend')
         short_url_obj = None
 
-        # Seeking domain in settings
+        # Seeking domain in settings.
         if brevisurl.settings.LOCAL_BACKEND_DOMAIN is not None:
             domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN.rstrip('/')
             short_url = absurl(domain=domain, path=reverse('brevisurl_redirect', kwargs={'token': token}))
@@ -37,7 +37,7 @@ class BrevisUrlRedirectView(RedirectView):
             except ShortUrl.DoesNotExist:
                 pass
 
-        # Seeking domain in django site framework and current site
+        # Seeking domain in django site framework and current site.
         if short_url_obj is None:
             try:
                 site = Site.objects.get_current()
@@ -48,7 +48,7 @@ class BrevisUrlRedirectView(RedirectView):
             except ShortUrl.DoesNotExist:
                 pass
 
-        # Seeking domain from current request
+        # Seeking domain from current request.
         if short_url_obj is None:
             try:
                 short_url = absurl(domain=self.request.get_host(), path=reverse('brevisurl_redirect', kwargs={'token': token}))

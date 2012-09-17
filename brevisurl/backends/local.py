@@ -35,20 +35,22 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
         try:
             short_url = ShortUrl()
             if self.kwargs.get('domain') is not None:
-                short_url.shortened_url = '{0}{1}'.format(self.kwargs.get('domain').rstrip('/'),
-                                                          reverse('brevisurl_redirect',
-                                                                  kwargs={'token': self.__generate_token()}))
+                # Domain is present in keyword arguments supplied by constructor.
+                domain = self.kwargs.get('domain').rstrip('/')
             elif brevisurl.settings.LOCAL_BACKEND_DOMAIN is not None:
-                short_url.shortened_url = '{0}{1}'.format(brevisurl.settings.LOCAL_BACKEND_DOMAIN.rstrip('/'),
-                                                          reverse('brevisurl_redirect',
-                                                                  kwargs={'token': self.__generate_token()}))
+                # Domain is defined in settings.
+                domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN.rstrip('/')
             else:
-                current_site = Site.objects.get_current()
-                short_url.shortened_url = '{0}://{1}{2}'.format(brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL,
-                                                                current_site.domain,
-                                                                reverse('brevisurl_redirect',
-                                                                        kwargs={'token': self.__generate_token()}))
+                # Domain is taken from django site framework.
+                domain = '{protocol:s}://{domain:s}'.format(protocol=brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL,
+                                                            domain=Site.objects.get_current().domain)
+            # Generating url path for shortened url.
+            url_path = reverse('brevisurl_redirect', kwargs={'token': self.__generate_token()})
+            if brevisurl.settings.LOCAL_BACKEND_STRIP_TOKEN_URL_SLASH:
+                url_path = url_path.lstrip('/')
+            # Saving newly generated shortened url.
             short_url.original_url = original_url
+            short_url.shortened_url = '{domain:s}{url_path:s}'.format(domain=domain, url_path=url_path)
             short_url.backend = self.class_path
             short_url.save()
             log.info('Url "%s" shortened to "%s"', original_url, short_url.shortened_url)
