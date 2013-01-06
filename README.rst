@@ -193,6 +193,6 @@ Author
 References
 ----------
 
- - http://github.com/char0n/django-brevisurl
+ - http://github.com/CodeScaleInc/django-brevisurl
  - http://pypi.python.org/pypi/django-brevisurl/
  - http://www.codescale.net/en/community#django-brevisurl
