@@ -2,6 +2,7 @@ import hashlib
 import logging
 from django.core.exceptions import ValidationError
 
+from django.conf import settings
 from django.db import models
 from django.core.validators import URLValidator
 
@@ -13,7 +14,7 @@ log = logging.getLogger(__name__)
 
 class ShortUrl(models.Model):
     """Model that represents shortened url."""
-    original_url = models.URLField(max_length=200, null=False, blank=False)
+    original_url = models.URLField(max_length=getattr(settings, 'LOCAL_BACKEND_ORIGINAL_URL_MAX_LENGTH', 200), null=False, blank=False)
     original_url_hash = models.CharField(max_length=64, null=False, blank=False)
     shortened_url = models.URLField(max_length=200, null=False, blank=False, unique=True)
     backend = models.CharField(max_length=200, null=False, blank=False)
