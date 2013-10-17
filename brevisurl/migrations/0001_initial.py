@@ -6,14 +6,16 @@ from django.db import models
 from django.conf import settings
 
 
+MAX_LEN_ORI_URL = getattr(settings, 'BREVISURL_LOCAL_BACKEND_TOKEN_LENGTH', 200)
+
+
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'ShortUrl'
-        max_len_ori_url = getattr(settings, 'BREVISURL_LOCAL_BACKEND_TOKEN_LENGTH', 200)
         db.create_table('brevisurl_shorturl', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('original_url', self.gf('django.db.models.fields.URLField')(max_length=max_len_ori_url)),
+            ('original_url', self.gf('django.db.models.fields.URLField')(max_length=MAX_LEN_ORI_URL)),
             ('original_url_hash', self.gf('django.db.models.fields.CharField')(max_length=64)),
             ('shortened_url', self.gf('django.db.models.fields.URLField')(unique=True, max_length=200)),
             ('backend', self.gf('django.db.models.fields.CharField')(max_length=200)),
@@ -39,7 +41,7 @@ class Migration(SchemaMigration):
             'backend': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'original_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
+            'original_url': ('django.db.models.fields.URLField', [], {'max_length': str(MAX_LEN_ORI_URL)}),
             'original_url_hash': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'shortened_url': ('django.db.models.fields.URLField', [], {'unique': 'True', 'max_length': '200'})
         }
