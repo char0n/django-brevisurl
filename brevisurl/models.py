@@ -7,6 +7,7 @@ from django.db import models
 from django.core.validators import URLValidator
 
 from brevisurl import get_connection
+import brevisurl.settings
 
 
 log = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ log = logging.getLogger(__name__)
 
 class ShortUrl(models.Model):
     """Model that represents shortened url."""
-    original_url = models.URLField(max_length=getattr(settings, 'LOCAL_BACKEND_ORIGINAL_URL_MAX_LENGTH', 200), null=False, blank=False)
+    original_url = models.URLField(max_length=brevis.settings.LOCAL_BACKEND_ORIGINAL_URL_MAX_LENGTH, null=False, blank=False)
     original_url_hash = models.CharField(max_length=64, null=False, blank=False)
     shortened_url = models.URLField(max_length=200, null=False, blank=False, unique=True)
     backend = models.CharField(max_length=200, null=False, blank=False)

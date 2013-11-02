@@ -6,16 +6,14 @@ from django.db import models
 from django.conf import settings
 
 
-MAX_LEN_ORI_URL = getattr(settings, 'BREVISURL_LOCAL_BACKEND_TOKEN_LENGTH', 200)
-
-
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'ShortUrl'
+        import brevis.settings
         db.create_table('brevisurl_shorturl', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('original_url', self.gf('django.db.models.fields.URLField')(max_length=MAX_LEN_ORI_URL)),
+            ('original_url', self.gf('django.db.models.fields.URLField')(max_length=brevis.settings.LOCAL_BACKEND_ORIGINAL_URL_MAX_LENGTH)),
             ('original_url_hash', self.gf('django.db.models.fields.CharField')(max_length=64)),
             ('shortened_url', self.gf('django.db.models.fields.URLField')(unique=True, max_length=200)),
             ('backend', self.gf('django.db.models.fields.CharField')(max_length=200)),
