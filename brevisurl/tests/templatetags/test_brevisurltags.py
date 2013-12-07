@@ -30,7 +30,7 @@ class TestShortenUrlTag(TestCase):
     def test_absurl_tag(self):
         url = Template("""
         {% load brevisurltags %}
-        {% absurl brevisurl_redirect token='12345' as brevis_url %}
+        {% absurl "brevisurl_redirect" token='12345' as brevis_url %}
         {{ brevis_url|shorten_url }}
         """).render(Context()).strip()
         self.assertEqual(ShortUrl.objects.all().count(), 1)
@@ -42,7 +42,7 @@ class TestShortenUrlTag(TestCase):
         brevisurl.settings.LOCAL_BACKEND_DOMAIN = 'http://brevisurl.net/'
         url = Template("""
         {% load brevisurltags %}
-        {% absurl brevisurl_redirect token='12345' as brevis_url %}
+        {% absurl "brevisurl_redirect" token='12345' as brevis_url %}
         {{ brevis_url|shorten_url }}
         """).render(Context()).strip()
         self.assertEqual(ShortUrl.objects.all().count(), 1)

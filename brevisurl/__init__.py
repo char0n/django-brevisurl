@@ -4,8 +4,8 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-import brevisurl.settings
-from brevisurl.utils import load_object
+
+__versionstr__ = '2.0.0'
 
 
 def get_connection(backend=None, fail_silently=False, **kwargs):
@@ -23,6 +23,8 @@ def get_connection(backend=None, fail_silently=False, **kwargs):
     :rtype: brevisurl.backends.base.BaseBrevisUrlBackend
 
     """
+    import brevisurl.settings
+    from brevisurl.utils import load_object
     path = backend or brevisurl.settings.DEFAULT_BACKEND
     klass = load_object(path)
     return klass(fail_silently=fail_silently, **kwargs)

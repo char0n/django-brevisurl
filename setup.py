@@ -13,10 +13,9 @@ def read(fname):
     """
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-
 setup(
     name='django-brevisurl',
-    version='1.0',
+    version=__import__('brevisurl').__versionstr__,
     description='django-brevisurl is django app for shortening urls',
     long_description=read('README.rst'),
     author=u'Vladimír Gorej',
@@ -26,7 +25,7 @@ setup(
     license='BSD',
     keywords = 'url short shortener',
     packages=find_packages('.'),
-    install_requires=['django'],
+    install_requires=['django', 'south'],
     platforms='any',
     classifiers=[
         'Development Status :: 5 - Production/Stable',

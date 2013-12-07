@@ -7,3 +7,5 @@ pip-log.txt*
 *.swn
 /dist/
 /django_brevisurl.egg-info/
+/settings.py
+/test.db

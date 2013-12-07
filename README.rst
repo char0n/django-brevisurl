@@ -184,6 +184,32 @@ To run the test run command: ::
  $ python manage.py test brevisurl
 
 
+Development setup
+-----------------
+::
+
+ $ make bootstrap
+ $ python manage.py test brevisurl
+
+Tests
+-----
+
+**Tested on evnironment**
+
+- Linux Mint 15 Olivia 64-bit
+- python 2.7.4
+- python unitest
+
+**Running tests**
+
+To run the tests, execute one of the following command:::
+
+ $ python manage.py test brevisurl
+
+Or:::
+
+ $ make test
+
 
 Author
 ------
