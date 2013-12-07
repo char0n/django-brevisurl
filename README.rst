@@ -64,6 +64,9 @@ Configuration
  # Characters that are used to generate tokens for local backend.
  BREVISURL_LOCAL_BACKEND_TOKEN_CHARS = list(string.ascii_letters + string.digits)
 
+ # Settings for maximum length for original url (including GET query parameters)
+ BREVISURL_LOCAL_ORIGINAL_URL_MAX_LENGTH = 200
+
  # Settings for token length.
  BREVISURL_LOCAL_BACKEND_TOKEN_LENGTH = 5
 

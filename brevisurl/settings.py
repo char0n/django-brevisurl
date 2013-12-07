@@ -15,6 +15,9 @@ LOCAL_BACKEND_TOKEN_CHARS = getattr(settings, 'BREVISURL_LOCAL_BACKEND_TOKEN_CHA
 # Settings for token length.
 LOCAL_BACKEND_TOKEN_LENGTH = getattr(settings, 'BREVISURL_LOCAL_BACKEND_TOKEN_LENGTH', 5)
 
+# Settings for url max length.
+LOCAL_BACKEND_ORIGINAL_URL_MAX_LENGTH = getattr(settings, 'SHORTURL_LOCAL_BACKEND_ORIGINAL_URL_MAX_LENGTH', 200)
+
 # Settings for url pattern.
 LOCAL_BACKEND_URL_PATTERN = getattr(settings, 'BREVISURL_LOCAL_BACKEND_URL_PATTERN',
                                     r'^(?P<token>[a-zA-Z0-9]{' + str(LOCAL_BACKEND_TOKEN_LENGTH) + r'})$')
