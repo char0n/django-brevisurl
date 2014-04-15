@@ -2,7 +2,9 @@ import math
 import random
 import logging
 
+from django.db import IntegrityError, transaction
 from django.contrib.sites.models import Site
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 
 import brevisurl.settings
@@ -26,32 +28,47 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
         :raises: ImproperlyConfigured, django.core.exceptions.ValidationError
         :raises: brevisurl.backends.local.TokensExhaustedError
         """
-        try:
-            short_url = ShortUrl.objects.get(backend=self.class_path, original_url=original_url)
-            log.info('Url "%s" already shortened to "%s"', original_url, short_url.shortened_url)
-            return short_url
-        except ShortUrl.DoesNotExist:
-            pass
+
+        if self.kwargs.get('domain') is not None:
+            # Domain is present in keyword arguments supplied by constructor.
+            domain = self.kwargs.get('domain')
+        elif brevisurl.settings.LOCAL_BACKEND_DOMAIN is not None:
+            # Domain is defined in settings.
+            domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN
+        else:
+            # Domain is taken from django site framework.
+            domain = Site.objects.get_current().domain
 
         try:
-            short_url = ShortUrl()
-            if self.kwargs.get('domain') is not None:
-                # Domain is present in keyword arguments supplied by constructor.
-                domain = self.kwargs.get('domain')
-            elif brevisurl.settings.LOCAL_BACKEND_DOMAIN is not None:
-                # Domain is defined in settings.
-                domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN
-            else:
-                # Domain is taken from django site framework.
-                domain = Site.objects.get_current().domain
-            # Saving newly generated shortened url.
-            short_url.original_url = original_url
-            short_url.shortened_url = absurl(domain=domain, path=reverse('brevisurl_redirect',
-                                                                         kwargs={'token': self.__generate_token()}))
-            short_url.backend = self.class_path
-            short_url.save()
-            log.info('Url "%s" shortened to "%s"', original_url, short_url.shortened_url)
-            return short_url
+            shortened_url = self.__generate_shortened_url(domain)
+            try:
+                short_url, created = ShortUrl.objects.get_or_create(backend=self.class_path,
+                                                                    original_url=original_url,
+                                                                    defaults={'shortened_url': shortened_url})
+                if created:
+                     log.info('Url "%s" shortened to "%s"', original_url, shortened_url)
+                else:
+                     log.info('Url "%s" already shortened to "%s"', original_url, short_url.shortened_url)
+                return short_url
+            except (IntegrityError, ValidationError) as e:
+                # Check if the error is an URL validation error.
+                if e.message_dict.has_key('original_url'):
+                    raise
+
+                # Generate another token.
+                self.__check_tokens_exhausted()
+                while True:
+                    shortened_url = self.__generate_shortened_url(domain)
+                    sid = transaction.savepoint()
+                    try:
+                        short_url = ShortUrl.objects.create(backend=self.class_path,
+                                                            original_url=original_url,
+                                                            shortened_url=shortened_url)
+                        log.info('Url "%s" shortened to "%s"', original_url, shortened_url)
+                        return short_url
+                    except (IntegrityError, ValidationError) as e:
+                        transaction.savepoint_rollback(sid)
+                        self.__check_tokens_exhausted()
         except Exception:
             if self.fail_silently:
                 return None
@@ -59,14 +76,18 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
                 log.exception('Unknown exception raised while shortening url "%s"', original_url)
                 raise
 
-    def __generate_token(self):
+    def __check_tokens_exhausted(self):
         chars = brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS
         size = brevisurl.settings.LOCAL_BACKEND_TOKEN_LENGTH
         if ShortUrl.objects.count() >= math.pow(len(chars), size):
             raise TokensExhaustedError('Consider incrementing the token length or change the char list')
+
+    def __generate_shortened_url(self, domain):
+        chars = brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS
+        size = brevisurl.settings.LOCAL_BACKEND_TOKEN_LENGTH
         random.shuffle(chars)
-        while True:
-            token = ''.join([random.choice(chars) for x in range(size)])
-            if not ShortUrl.objects.filter(backend=self.class_path, shortened_url__endswith=token).count():
-                break
-        return token
+        token = ''.join([random.choice(chars) for x in range(size)])
+        shortened_url = absurl(domain=domain,
+                               path=reverse('brevisurl_redirect',
+                                            kwargs={'token': token}))
+        return shortened_url
