@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 class ShortUrl(models.Model):
     """Model that represents shortened url."""
     original_url = models.URLField(max_length=brevisurl.settings.LOCAL_BACKEND_ORIGINAL_URL_MAX_LENGTH,
-                                   null=False, blank=False)
+                                   null=False, blank=False, db_index=True)
     original_url_hash = models.CharField(max_length=64, null=False, blank=False)
     shortened_url = models.URLField(max_length=200, null=False, blank=False, unique=True)
     backend = models.CharField(max_length=200, null=False, blank=False)
