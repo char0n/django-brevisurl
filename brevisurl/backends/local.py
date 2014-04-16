@@ -65,7 +65,7 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
                                                             original_url=original_url,
                                                             shortened_url=shortened_url)
                         log.info('Url "%s" shortened to "%s"', original_url, shortened_url)
-                        transaction.savepoint_commit()
+                        transaction.savepoint_commit(sid)
                         return short_url
                     except (IntegrityError, ValidationError) as e:
                         transaction.savepoint_rollback(sid)
