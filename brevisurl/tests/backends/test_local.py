@@ -1,11 +1,15 @@
+from django.db import transaction
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.core.validators import URLValidator
 
 import brevisurl.settings
 from brevisurl import get_connection
 from brevisurl.models import ShortUrl
 from brevisurl.backends.local import TokensExhaustedError
+
+import random
+
 
 
 class TestLocalBrevisUrlBackend(TestCase):
@@ -129,3 +133,20 @@ class TestLocalBrevisUrlBackend(TestCase):
         connection = get_connection('brevisurl.backends.local.BrevisUrlBackend', domain='http://test.com/d/')
         short_url = connection.shorten_url(original_url)
         self.assertRegexpMatches(short_url.shortened_url, r'^http://test\.com/d/[^/]{5}$')
+
+class TestDuration(TransactionTestCase):
+    
+    def setUp(self):
+        self.connection = get_connection('brevisurl.backends.local.BrevisUrlBackend')
+
+    def test_shorten_urls_duration(self):
+        for i in range(0, 10000):
+            url = 'http://www.codescale.net/%s' % random.getrandbits(30)
+            self.connection.shorten_url(url)
+
+    @transaction.commit_on_success
+    def test_shorten_urls_duration_commit_on_success(self):
+        for i in range(0, 10000):
+            url = 'http://www.codescale.net/%s' % random.getrandbits(30)
+            self.connection.shorten_url(url)  
+    
