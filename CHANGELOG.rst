@@ -1,3 +1,10 @@
+Version 2.0.1
+-------------
+
+**Improvement**
+- URL shortening speed improvement
+
+
 Version 2.0.0
 -------------
 
