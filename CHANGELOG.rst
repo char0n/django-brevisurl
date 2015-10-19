@@ -1,3 +1,10 @@
+Version 2.0.2
+-------------
+
+**Improvement**
+- Make updated max length settings variable backwards compatible
+
+
 Version 2.0.1
 -------------
 
