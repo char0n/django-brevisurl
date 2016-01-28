@@ -61,10 +61,16 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
                     shortened_url = self.__generate_shortened_url(domain)
                     sid = transaction.savepoint()
                     try:
-                        short_url = ShortUrl.objects.create(backend=self.class_path,
-                                                            original_url=original_url,
-                                                            shortened_url=shortened_url)
-                        log.info('Url "%s" shortened to "%s"', original_url, shortened_url)
+                        short_url, created = ShortUrl.objects.get_or_create(
+                            backend=self.class_path,
+                            original_url=original_url,
+                            defaults={'shortened_url': shortened_url})
+                        if created:
+                             log.info('Url "%s" shortened to "%s"',
+                                      original_url, shortened_url)
+                        else:
+                             log.info('Url "%s" already shortened to "%s"',
+                                      original_url, short_url.shortened_url)
                         transaction.savepoint_commit(sid)
                         return short_url
                     except (IntegrityError, ValidationError) as e:
