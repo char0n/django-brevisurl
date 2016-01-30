@@ -5,7 +5,7 @@ except ImportError:
     from StringIO import StringIO
 
 
-__versionstr__ = '2.0.2'
+__versionstr__ = '2.0.3'
 
 
 def get_connection(backend=None, fail_silently=False, **kwargs):

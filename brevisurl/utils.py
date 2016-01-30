@@ -1,6 +1,10 @@
 import urlparse
 
-from django.utils import importlib
+try:
+    from django.utils import importlib
+except:
+    import importlib
+
 from django.contrib.sites.models import Site
 
 import brevisurl.settings

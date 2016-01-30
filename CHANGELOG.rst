@@ -1,3 +1,9 @@
+Version 2.0.3
+-------------
+
+**Improvement**
+- Stop using django.utils.importlib and move to python importlibs for Django 1.9 support
+
 Version 2.0.2
 -------------
 
