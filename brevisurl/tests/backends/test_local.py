@@ -1,7 +1,12 @@
-from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.test import TestCase, TransactionTestCase
 from django.core.validators import URLValidator
+
+try:
+    from django.db.transaction import atomic
+except ImportError:
+    from django.db.transaction import commit_on_success as atomic
+
 
 import brevisurl.settings
 from brevisurl import get_connection
@@ -144,7 +149,7 @@ class TestDuration(TransactionTestCase):
             url = 'http://www.codescale.net/%s' % random.getrandbits(30)
             self.connection.shorten_url(url)
 
-    @transaction.commit_on_success
+    @atomic
     def test_shorten_urls_duration_commit_on_success(self):
         for i in range(0, 10000):
             url = 'http://www.codescale.net/%s' % random.getrandbits(30)
