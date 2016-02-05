@@ -24,6 +24,7 @@ setup(
     download_url='http://github.com/char0n/django-brevisurl/tarball/master',
     license='BSD',
     keywords = 'url short shortener',
+    test_suite="runtests.runtests",
     packages=find_packages('.'),
     install_requires=['django', 'south'],
     platforms='any',
