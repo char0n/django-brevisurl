@@ -183,6 +183,11 @@ To run the test run command: ::
 
  $ python manage.py test brevisurl
 
+Alternately, install tox to run tests against multiple versions
+of Python and Django: ::
+
+ $ pip install tox
+ $ tox
 
 Development setup
 -----------------
