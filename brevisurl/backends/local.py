@@ -44,6 +44,7 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
             try:
                 short_url, created = ShortUrl.objects.get_or_create(backend=self.class_path,
                                                                     original_url=original_url,
+                                                                    original_url_hash=ShortUrl.url_hash(original_url),
                                                                     defaults={'shortened_url': shortened_url})
                 if created:
                      log.info('Url "%s" shortened to "%s"', original_url, shortened_url)

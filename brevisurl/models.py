@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 class ShortUrl(models.Model):
     """Model that represents shortened url."""
     original_url = models.URLField(max_length=brevisurl.settings.LOCAL_BACKEND_ORIGINAL_URL_MAX_LENGTH,
-                                   null=False, blank=False, db_index=True)
+                                   null=False, blank=False)
     original_url_hash = models.CharField(max_length=64, null=False, blank=False)
     shortened_url = models.URLField(max_length=200, null=False, blank=False, unique=True)
     backend = models.CharField(max_length=200, null=False, blank=False)
@@ -48,10 +48,14 @@ class ShortUrl(models.Model):
         return super(ShortUrl, self).clean()
 
     def save(self, force_insert=False, force_update=False, using=None):
-        if self.pk is None:
-            self.original_url_hash = hashlib.sha256(self.original_url).hexdigest()
+        if self.pk is None and not self.original_url_hash:
+            self.original_url_hash = self.url_hash(self.original_url)
         self.full_clean()
         return super(ShortUrl, self).save(force_insert, force_update, using)
+
+    @staticmethod
+    def url_hash(url):
+        return hashlib.sha256(url).hexdigest()
 
     class Meta:
         unique_together = (('original_url_hash', 'backend'),)
