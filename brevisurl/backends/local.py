@@ -53,7 +53,7 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
                 return short_url
             except (IntegrityError, ValidationError) as e:
                 # Check if the error is an URL validation error.
-                if e.message_dict.has_key('original_url'):
+                if isinstance(e, ValidationError) and e.message_dict.has_key('original_url'):
                     raise
 
                 # Generate another token.
