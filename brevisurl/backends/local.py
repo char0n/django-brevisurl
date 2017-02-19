@@ -44,6 +44,7 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
             try:
                 short_url, created = ShortUrl.objects.get_or_create(backend=self.class_path,
                                                                     original_url=original_url,
+                                                                    original_url_hash=ShortUrl.url_hash(original_url),
                                                                     defaults={'shortened_url': shortened_url})
                 if created:
                      log.info('Url "%s" shortened to "%s"', original_url, shortened_url)
@@ -52,7 +53,7 @@ class BrevisUrlBackend(BaseBrevisUrlBackend):
                 return short_url
             except (IntegrityError, ValidationError) as e:
                 # Check if the error is an URL validation error.
-                if e.message_dict.has_key('original_url'):
+                if isinstance(e, ValidationError) and e.message_dict.has_key('original_url'):
                     raise
 
                 # Generate another token.
