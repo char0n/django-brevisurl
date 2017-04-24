@@ -25,7 +25,7 @@ class TestLocalBrevisUrlBackend(TestCase):
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertEqual(short_url.original_url, original_url)
-        self.assertRegexpMatches(short_url.shortened_url, URLValidator.regex)
+        self.assertRegex(short_url.shortened_url, URLValidator.regex)
         brevisurl.settings.LOCAL_BACKEND_DOMAIN = _original_domain
 
     def test_shorten_url_domain_from_settings(self):
@@ -36,7 +36,7 @@ class TestLocalBrevisUrlBackend(TestCase):
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertEqual(short_url.original_url, original_url)
-        self.assertRegexpMatches(short_url.shortened_url, r'^http://brevisurl\.net/[a-zA-Z0-9]{5}$')
+        self.assertRegex(short_url.shortened_url, r'^http://brevisurl\.net/[a-zA-Z0-9]{5}$')
         brevisurl.settings.LOCAL_BACKEND_DOMAIN = _original_domain
 
     def test_shorten_url_reuse_old(self):
@@ -45,11 +45,11 @@ class TestLocalBrevisUrlBackend(TestCase):
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertEqual(short_url.original_url, original_url)
-        self.assertRegexpMatches(short_url.shortened_url, URLValidator.regex)
+        self.assertRegex(short_url.shortened_url, URLValidator.regex)
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertEqual(short_url.original_url, original_url)
-        self.assertRegexpMatches(short_url.shortened_url, URLValidator.regex)
+        self.assertRegex(short_url.shortened_url, URLValidator.regex)
 
     def test_shorten_url_create_new(self):
         original_url = 'http://www.codescale.net/'
@@ -57,12 +57,12 @@ class TestLocalBrevisUrlBackend(TestCase):
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertEqual(short_url.original_url, original_url)
-        self.assertRegexpMatches(short_url.shortened_url, URLValidator.regex)
+        self.assertRegex(short_url.shortened_url, URLValidator.regex)
         original_url = 'http://www.codescale.net/en/company/'
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 2)
         self.assertEqual(short_url.original_url, original_url)
-        self.assertRegexpMatches(short_url.shortened_url, URLValidator.regex)
+        self.assertRegex(short_url.shortened_url, URLValidator.regex)
 
     def test_shorten_url_invalid_original_url(self):
         with self.assertRaises(ValidationError):
@@ -82,7 +82,7 @@ class TestLocalBrevisUrlBackend(TestCase):
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertEqual(short_url.original_url, original_url)
-        self.assertRegexpMatches(short_url.shortened_url, r'/aaaaa$')
+        self.assertRegex(short_url.shortened_url, r'/aaaaa$')
         brevisurl.settings.LOCAL_BACKEND_TOKEN_CHARS = _default_chars
 
     def test_exhausted_tokens(self):
@@ -103,7 +103,7 @@ class TestLocalBrevisUrlBackend(TestCase):
         self.assertEqual(ShortUrl.objects.all().count(), 0)
         short_url = connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
-        self.assertRegexpMatches(short_url.shortened_url, r'^http://test\.com/.{5}')
+        self.assertRegex(short_url.shortened_url, r'^http://test\.com/.{5}')
 
     def test_configurable_protocol(self):
         _original_domain = brevisurl.settings.LOCAL_BACKEND_DOMAIN
@@ -112,13 +112,13 @@ class TestLocalBrevisUrlBackend(TestCase):
         self.assertEqual(ShortUrl.objects.all().count(), 0)
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 1)
-        self.assertRegexpMatches(short_url.shortened_url, '^http://')
+        self.assertRegex(short_url.shortened_url, '^http://')
         original_url = 'http://www.codescale.net/another'
         _default_protocol = brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL
         brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL = 'https'
         short_url = self.connection.shorten_url(original_url)
         self.assertEqual(ShortUrl.objects.all().count(), 2)
-        self.assertRegexpMatches(short_url.shortened_url, '^https://')
+        self.assertRegex(short_url.shortened_url, '^https://')
         brevisurl.settings.LOCAL_BACKEND_DOMAIN_PROTOCOL = _default_protocol
         brevisurl.settings.LOCAL_BACKEND_DOMAIN = _original_domain
 
@@ -126,27 +126,26 @@ class TestLocalBrevisUrlBackend(TestCase):
         original_url = 'http://www.codescale.net/'
         connection = get_connection('brevisurl.backends.local.BrevisUrlBackend', domain='http://test.com/d')
         short_url = connection.shorten_url(original_url)
-        self.assertRegexpMatches(short_url.shortened_url, r'^http://test\.com/d[^/]{5}$')
+        self.assertRegex(short_url.shortened_url, r'^http://test\.com/d[^/]{5}$')
 
     def test_url_path_slash_no_stripping(self):
         original_url = 'http://www.codescale.net/'
         connection = get_connection('brevisurl.backends.local.BrevisUrlBackend', domain='http://test.com/d/')
         short_url = connection.shorten_url(original_url)
-        self.assertRegexpMatches(short_url.shortened_url, r'^http://test\.com/d/[^/]{5}$')
+        self.assertRegex(short_url.shortened_url, r'^http://test\.com/d/[^/]{5}$')
 
 class TestDuration(TransactionTestCase):
-    
+
     def setUp(self):
         self.connection = get_connection('brevisurl.backends.local.BrevisUrlBackend')
 
     def test_shorten_urls_duration(self):
-        for i in range(0, 10000):
+        for i in range(0, 10):
             url = 'http://www.codescale.net/%s' % random.getrandbits(30)
             self.connection.shorten_url(url)
 
-    @transaction.commit_on_success
+    @transaction.atomic
     def test_shorten_urls_duration_commit_on_success(self):
-        for i in range(0, 10000):
+        for i in range(0, 10):
             url = 'http://www.codescale.net/%s' % random.getrandbits(30)
-            self.connection.shorten_url(url)  
-    
+            self.connection.shorten_url(url)

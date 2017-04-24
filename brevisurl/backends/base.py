@@ -1,10 +1,8 @@
 from abc import ABCMeta
 
 
-class BaseBrevisUrlBackend(object):
+class BaseBrevisUrlBackend(object, metaclass=ABCMeta):
     """Base class for brevisurl backend implementations. Subclasses must at least overwrite shorten_url()."""
-
-    __metaclass__ = ABCMeta
 
 
     def __init__(self, fail_silently=False, **kwargs):
