@@ -11,7 +11,7 @@ from brevisurl import get_connection
 
 def _random_string(k):
     """Generate a string of length k ascii letters randomly"""
-    return ''.join(random.choice(string.ascii_letters) for x in xrange(k))
+    return ''.join(random.choice(string.ascii_letters) for x in range(k))
     
 
 class TestModels(TestCase):

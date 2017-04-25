@@ -1,10 +1,10 @@
-from django.utils import unittest
+from django.test import TestCase
 
 import brevisurl.settings
 from brevisurl import context_processors
 
 
-class TestContextProcessors(unittest.TestCase):
+class TestContextProcessors(TestCase):
 
     def test_context_processor_defaults(self):
         _DEFAULT_BACKEND = brevisurl.settings.DEFAULT_BACKEND

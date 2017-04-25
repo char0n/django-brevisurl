@@ -49,7 +49,7 @@ class ShortUrl(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None):
         if self.pk is None:
-            self.original_url_hash = hashlib.sha256(self.original_url).hexdigest()
+            self.original_url_hash = hashlib.sha256(self.original_url.encode('utf-8')).hexdigest()
         self.full_clean()
         return super(ShortUrl, self).save(force_insert, force_update, using)
 
