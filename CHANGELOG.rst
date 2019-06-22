@@ -1,3 +1,9 @@
+Version 2.0.4
+-------------
+
+**Improvement**
+- Refactor to work with Django 1.11 and Python 3.6
+
 Version 2.0.3
 -------------
 

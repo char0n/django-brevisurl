@@ -1,4 +1,4 @@
-import urlparse
+import urllib.parse
 
 from django import template
 from django.template.defaulttags import URLNode, url
@@ -22,10 +22,10 @@ class AbsoluteURLNode(URLNode):
         path = super(AbsoluteURLNode, self).render(context)
         domain = 'http://{domain:s}'.format(domain=Site.objects.get_current().domain)
         if self.asvar:
-            context[self.asvar]= urlparse.urljoin(domain, context[self.asvar])
+            context[self.asvar]= urllib.parse.urljoin(domain, context[self.asvar])
             return ''
         else:
-            return urlparse.urljoin(domain, path)
+            return urllib.parse.urljoin(domain, path)
 
 def absurl(parser, token, node_cls=AbsoluteURLNode):
     """Just like {% url %} but ads the domain of the current site."""

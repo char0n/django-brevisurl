@@ -28,7 +28,7 @@ class TestBrevisUrlRedirectView(TestCase):
 
     def test_redirect(self):
         response = self.client.get(reverse('brevisurl_redirect', kwargs={'token': 12345}))
-        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response.status_code, 302)
 
     def test_redirect_non_existing_token(self):
         response = self.client.get(reverse('brevisurl_redirect', kwargs={'token': 54321}))

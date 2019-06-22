@@ -1,4 +1,4 @@
-import urlparse
+import urllib.parse
 
 try:
     from django.utils import importlib
@@ -20,7 +20,7 @@ def load_object(import_path):
     :raises: ValueError, ImportError, AttributeError
 
     """
-    if not (isinstance(import_path, basestring) and '.' in import_path):
+    if not (isinstance(import_path, str) and '.' in import_path):
         raise ValueError('There must be at least one dot in import path: "%s"', import_path)
     module_name, object_name = import_path.rsplit('.', 1)
     module = importlib.import_module(module_name)
@@ -36,7 +36,7 @@ def url_has_protocol(url):
     :rtype: bool
 
     """
-    url_parsed = urlparse.urlparse(url)
+    url_parsed = urllib.parse.urlparse(url)
     return True if url_parsed.netloc != '' and url_parsed.scheme in ('http', 'https') else False
 
 
@@ -49,7 +49,7 @@ def url_has_path(url):
     :rtype: bool
 
     """
-    url_parsed = urlparse.urlparse(url)
+    url_parsed = urllib.parse.urlparse(url)
     return True if url_parsed.netloc != '' and url_parsed.path != '' else False
 
 
