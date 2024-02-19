@@ -16,7 +16,7 @@ class TestShortenUrlTag(TestCase):
         """).render(Context({'url': original_url})).strip()
         self.assertEqual(ShortUrl.objects.all().count(), 1)
         self.assertEqual(ShortUrl.objects.all()[0].original_url, original_url)
-        self.assertRegexpMatches(url, URLValidator.regex)
+        self.assertRegex(url, URLValidator.regex)
 
     def test_shorten_url_filter_invalid_url(self):
         original_url = 'www.codescale.'
@@ -34,7 +34,7 @@ class TestShortenUrlTag(TestCase):
         {{ brevis_url|shorten_url }}
         """).render(Context()).strip()
         self.assertEqual(ShortUrl.objects.all().count(), 1)
-        self.assertRegexpMatches(url, URLValidator.regex)
+        self.assertRegex(url, URLValidator.regex)
 
 
     def test_absurl_tag_domain_from_settings(self):
@@ -46,6 +46,6 @@ class TestShortenUrlTag(TestCase):
         {{ brevis_url|shorten_url }}
         """).render(Context()).strip()
         self.assertEqual(ShortUrl.objects.all().count(), 1)
-        self.assertRegexpMatches(url, URLValidator.regex)
-        self.assertRegexpMatches(url, r'^http://brevisurl\.net/[a-zA-Z0-9]{5}$')
+        self.assertRegex(url, URLValidator.regex)
+        self.assertRegex(url, r'^http://brevisurl\.net/[a-zA-Z0-9]{5}$')
         brevisurl.settings.LOCAL_BACKEND_DOMAIN = _original_domain

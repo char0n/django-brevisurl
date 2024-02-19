@@ -1,11 +1,11 @@
-from django.utils import unittest
+from django.test import TestCase
 
 from brevisurl import get_connection, shorten_url
 from brevisurl.backends.local import BrevisUrlBackend
 from brevisurl.backends.base import BaseBrevisUrlBackend
 
 
-class TestGetConnection(unittest.TestCase):
+class TestGetConnection(TestCase):
 
     def test_get_default_connection(self):
         connection = get_connection()

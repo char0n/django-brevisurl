@@ -1,11 +1,8 @@
 import traceback
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from StringIO import StringIO
+from io import StringIO
 
 
-__versionstr__ = '2.0.3'
+__versionstr__ = '2.0.5'
 
 
 def get_connection(backend=None, fail_silently=False, **kwargs):

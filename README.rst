@@ -9,8 +9,8 @@ url is handled by the shortening backend.
 Requirements
 ------------
 
-- python 2.7+
-- django
+- python 3.9
+- django 4.2
 
 
 Installation
@@ -34,7 +34,6 @@ Install via pypi or copy this module into your project or into your PYTHONPATH.
      'web',
      'debug_toolbar',
      'rosetta',
-     'south',
      'brevisurl'
  )
 
@@ -106,7 +105,7 @@ switching I suggest you to use configuration like this. Setting is also importan
 while using `absurl` templatag. Domain for absolute url is generated from current Site object.
 
 ::
- 
+
  if DEBUG:
      SITE_ID = 2 # pk for Site object containing your development domain e.g. 'localhost:8000'
  else:

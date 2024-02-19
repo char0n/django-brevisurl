@@ -1,11 +1,11 @@
-from django.utils import unittest
+from django.test import TestCase
 from django.contrib.sites.models import Site
 
 from brevisurl.utils import load_object, absurl, url_has_protocol, url_has_path
 from brevisurl.backends.local import BrevisUrlBackend
 
 
-class TestLoadObject(unittest.TestCase):
+class TestLoadObject(TestCase):
 
     def test_load_valid_object(self):
         klass = load_object('brevisurl.backends.local.BrevisUrlBackend')
@@ -24,7 +24,7 @@ class TestLoadObject(unittest.TestCase):
             load_object('brevisurl')
 
 
-class TestAbsUrl(unittest.TestCase):
+class TestAbsUrl(TestCase):
 
     def test_protocol(self):
         abs_url = absurl(protocol='http', domain='www.codescale.net', path='/')
@@ -54,7 +54,7 @@ class TestAbsUrl(unittest.TestCase):
         self.assertEqual(abs_url, 'http://sub.codescale.net/')
 
 
-class TestUrlHasProtocol(unittest.TestCase):
+class TestUrlHasProtocol(TestCase):
 
     def test_url_with_protocol(self):
         url = 'http://test.sk'
@@ -65,7 +65,7 @@ class TestUrlHasProtocol(unittest.TestCase):
         self.assertFalse(url_has_protocol(url))
 
 
-class TestUrlHasPath(unittest.TestCase):
+class TestUrlHasPath(TestCase):
 
     def test_url_with_path(self):
         url = 'http://test.sk/'
