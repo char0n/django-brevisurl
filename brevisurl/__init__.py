@@ -2,7 +2,7 @@ import traceback
 from io import StringIO
 
 
-__versionstr__ = '2.0.4'
+__versionstr__ = '2.0.5'
 
 
 def get_connection(backend=None, fail_silently=False, **kwargs):

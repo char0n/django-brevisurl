@@ -9,8 +9,8 @@ url is handled by the shortening backend.
 Requirements
 ------------
 
-- python 3.6
-- django 1.11
+- python 3.9
+- django 4.2
 
 
 Installation
